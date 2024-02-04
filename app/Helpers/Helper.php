@@ -1,29 +1,20 @@
 <?php
 
 
-function successResponse($message, $data = [], $status = 200)
+function successResponse($code, $data = [])
 {
     return response()->xml([
-        'type' => 'success',
-        'title' => $message,
-        'content' => $data
-    ], $status);
+        'status' => "Thành công",
+        'data' => $data,
+        'code' => $code,
+    ], 200);
 }
 
-function errorResponse($message, $data = [], $status = 400)
+function errorResponse($code, $data = [])
 {
     return response()->xml([
-        'type' => 'error',
-        'title' => $message,
-        'content' => $data,
-    ], $status);
-}
-
-function notFoundResponse($message, $data = [], $status = 404)
-{
-    return response()->xml([
-        'type' => 'not_found',
-        'title' => $message,
-        'content' => $data,
-    ], $status);
+        'status' => "Thất bại",
+        'data' => $data,
+        'code' => $code,
+    ], 200);
 }

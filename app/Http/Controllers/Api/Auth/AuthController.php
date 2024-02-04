@@ -18,14 +18,11 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
-
         $response = [
-            'email' => $user['email'],
-            'name' => $user['name'],
             'token' => 'Bearer ' . $user->createToken('App')->accessToken
         ];
 
-        return successResponse('success', $response, 200);
+        return successResponse(1, $response);
     }
 
     public function login(AuthRequest $request)
@@ -36,13 +33,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $response = [
-                'email' => $user['email'],
-                'name' => $user['name'],
                 'token' => 'Bearer ' . $user->createToken('App')->accessToken
             ];
-            return successResponse('success', $response, 200);
+            return successResponse(1, $response);
         }
 
-        return errorResponse('error', 'Unauthorised', 401);
+        return errorResponse(0, ['Unauthorised']);
     }
 }
