@@ -1,7 +1,7 @@
 <?php
 
 
-function successResponse($code, $data = [])
+function xmlSuccessResponse($code, $data = [])
 {
     // return response()->xml($data, $status = 200, array $headers = [], $xmlRoot = 'response', $encoding = null);
     return response()->xml(
@@ -19,7 +19,7 @@ function successResponse($code, $data = [])
     );
 }
 
-function errorResponse($code, $data = [])
+function xmlErrorResponse($code, $data = [])
 {
     // return response()->xml($data, $status = 200, array $headers = [], $xmlRoot = 'response', $encoding = null);
     return response()->xml(

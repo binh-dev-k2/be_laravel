@@ -22,7 +22,7 @@ class AuthController extends Controller
             'token' => 'Bearer ' . $user->createToken('App')->accessToken
         ];
 
-        return successResponse(1, $response);
+        return xmlSuccessResponse(1, $response);
     }
 
     public function login(AuthRequest $request)
@@ -35,9 +35,9 @@ class AuthController extends Controller
             $response = [
                 'token' => 'Bearer ' . $user->createToken('App')->accessToken
             ];
-            return successResponse(1, $response);
+            return xmlSuccessResponse(1, $response);
         }
 
-        return errorResponse(0, ['Unauthorised']);
+        return xmlErrorResponse(0, ['Unauthorised']);
     }
 }
