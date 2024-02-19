@@ -15,3 +15,4 @@ package-lock.json
 composer.lock
 /.idea
 /.vscode
+composer.lock

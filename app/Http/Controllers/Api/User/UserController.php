@@ -18,7 +18,10 @@ class UserController extends Controller
     {
         $users = User::all();
 
-        return successResponse(1, UserResource::collection($users));
+        return successResponse(
+            $code = 0,
+            $data = UserResource::collection($users)
+        );
     }
 
     /**

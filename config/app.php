@@ -182,6 +182,7 @@ return [
         // others services
         Laravel\Passport\PassportServiceProvider::class,
         Mtownsend\ResponseXml\Providers\ResponseXmlServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*
