@@ -12,7 +12,8 @@
         "laravel/passport": "^10.4",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "mtownsend/response-xml": "^2.2"
+        "mtownsend/response-xml": "^2.2",
+        "spatie/laravel-permission": "^6.3"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
