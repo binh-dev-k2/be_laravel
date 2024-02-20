@@ -14,34 +14,25 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    private $waitTimeUserCode = 5;
-
     public function register(AuthRequest $request)
     {
         $data = $request->validated();
 
         $user = User::where('email', $data['email'])->first();
-        if ($user) {
-            if (!$user->email_verified_at) {
-                $verify = $this->getUserCode($data['email']);
-                if ($verify->submit == 0 && Carbon::parse($verify->end_time)->isPast()) {
-                    $this->sendUserCode($data['email']);
-                    return xmlSuccessResponse($code = 0, $data = []);
-                }
-            }
-            return xmlErrorResponse($code = 1, $data = ['user da ton tai roi']);
+        if (!$user) {
+            $user = $this->createUser($data);
+            $this->sendOTP($user->email);
+            return xmlSuccessResponse($code = 0, $data = []);
         }
 
-        $user = User::create([
-            'name' => $data['name'],
-            'uuid' => Str::uuid(),
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
-
-        $this->sendUserCode($data['email']);
-
-        return xmlSuccessResponse($code = 0, $data = []);
+        if (!$user->email_verified_at) {
+            $otp = $this->getLastestOTP($data['email']);
+            if ($otp->submit == 0 && Carbon::parse($otp->end_time)->isPast()) {
+                $this->sendOTP($data['email']);
+                return xmlSuccessResponse($code = 0, $data = []);
+            }
+        }
+        return xmlErrorResponse(1, ['user da ton tai roi']);
     }
 
 
@@ -50,16 +41,15 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $verify = $this->verifyCode($data);
-        if ($verify != 0) {
-            return xmlErrorResponse($code = $verify, $data = []);
+        $verify = $this->verifyOTP($data);
+        if ($verify !== 0) {
+            return xmlErrorResponse($code = $verify);
         }
 
         $user = User::where('email', $data['email'])->first();
         $user->email_verified_at = Carbon::now()->getTimestamp();
         $user->save();
-
-        return xmlSuccessResponse($code = 0, $data = []);
+        return xmlSuccessResponse(0);
     }
 
 
@@ -68,9 +58,9 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $verify = $this->getUserCode($data['email']);
+        $verify = $this->getLastestOTP($data['email']);
         if ($verify->submit == 0 && Carbon::parse($verify->end_time)->isPast()) {
-            $this->sendUserCode($data['email']);
+            $this->sendOTP($data['email']);
             return xmlSuccessResponse($code = 0, $data = []);
         }
 
@@ -78,72 +68,13 @@ class AuthController extends Controller
     }
 
 
-    // login
-    public function login(AuthRequest $request)
+    public function createUser($data)
     {
-        $data = $request->validated();
-
-        $credentials = ['email' => $data['email'], 'password' => $data['password']];
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            if (!$user->email_verified_at) return xmlErrorResponse($code = 1, $data = []);
-
-            $response = [
-                'token' => 'Bearer ' . $user->createToken('App')->accessToken
-            ];
-            return xmlSuccessResponse(0, $response);
-        }
-
-        return xmlErrorResponse($code = 1, $data = []);
-    }
-
-
-    // Send a user code to email
-    public function sendUserCode($email)
-    {
-        $code = rand(100000, 999999);
-
-        DB::table('user_codes')
-            ->insert([
-                'email' => $email,
-                'code' => $code,
-                'end_time' => Carbon::now()->addMinutes($this->waitTimeUserCode),
-            ]);
-
-        dispatch(new SendMail($email, new VerifyEmail($code)));
-    }
-
-
-    public function getUserCode($email)
-    {
-        return DB::table('user_codes')
-            ->where('email', $email)
-            ->latest()
-            ->first();
-    }
-
-
-    // Verify user code
-    public function verifyCode($data)
-    {
-        $verify = $this->getUserCode($data['email']);
-
-        if (empty($verify)) {
-            return 1;
-        }
-        if (Carbon::parse($verify->end_time)->isPast()) {
-            return 2;
-        }
-        if ($verify->code != $data['code']) {
-            return 3;
-        }
-
-        DB::table('user_codes')
-            ->where('email', $data['email'])
-            ->update([
-                'submit' => 1,
-            ]);
-
-        return 0;
+        return User::create([
+            'name' => $data['name'],
+            'uuid' => Str::uuid(),
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
     }
 }
