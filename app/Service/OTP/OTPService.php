@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Service\OTP;
+
 use App\Jobs\SendMail;
 use App\Mail\VerifyEmail;
 use Carbon\Carbon;
