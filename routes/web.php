@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +22,9 @@ Route::get('/', function () {
 Route::middleware('auth:api')->get('/user', function () {
 });
 
+// Route::get('/setup-server', function () {
+//     Artisan::call('cache:clear');
+//     Artisan::call('config:clear');
+//     Artisan::call('migrate');
+//     echo 'done';
+// });
