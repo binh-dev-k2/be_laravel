@@ -32,7 +32,7 @@ class RegisterController extends Controller
 
         if (!$user->email_verified_at) {
             $otp = $this->OTPService->getLastestOTP($data['email']);
-            if ($otp->submit == 0 && Carbon::parse($otp->end_time)->isPast()) {
+            if ($otp->submit == 0 && Carbon::parse($otp->expired_in)->isPast()) {
                 $this->OTPService->sendOTP($data['email']);
                 return xmlSuccessResponse(0);
             }
@@ -64,7 +64,7 @@ class RegisterController extends Controller
         $data = $request->validated();
 
         $verify = $this->OTPService->getLastestOTP($data['email']);
-        if ($verify->submit == 0 && Carbon::parse($verify->end_time)->isPast()) {
+        if ($verify->submit == 0 && Carbon::parse($verify->expired_in)->isPast()) {
             $this->OTPService->sendOTP($data['email']);
             return xmlSuccessResponse(0);
         }
