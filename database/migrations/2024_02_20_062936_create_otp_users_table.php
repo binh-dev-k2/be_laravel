@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserCodesTable extends Migration
+class CreateOtpUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateUserCodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_codes', function (Blueprint $table) {
+        Schema::create('otp_users', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
+            $table->string('email')->index();
             $table->unsignedInteger('code');
-            $table->dateTime('end_time');
+            $table->dateTime('expired_in');
             $table->tinyInteger('submit')->default(0);
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ class CreateUserCodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_codes');
+        Schema::dropIfExists('otp_users');
     }
 }
