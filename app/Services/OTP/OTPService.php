@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\OTP;
+namespace App\Service\OTP;
 
 use App\Jobs\SendMail;
 use App\Mail\VerifyEmail;
@@ -32,7 +32,7 @@ class OTPService
     }
 
     // get lastest user otp
-    public function getLatestOTP($email)
+    public function getLastestOTP($email)
     {
         return $this->db
             ->where('email', $email)
@@ -44,18 +44,18 @@ class OTPService
     // Verify user code
     public function verifyOTP($email, $otp)
     {
-        $verify = $this->getLatestOTP($email);
+        $verify = $this->getLastestOTP($email);
 
         if (empty($verify)) {
-            return 2; // khong tim thay otp
+            return 1;
         }
-        if (Carbon::parse($verify->expired_in)->isPast()) {
-            return 3; // otp qua han
+        if (Carbon::parse($verify->end_time)->isPast()) {
+            return 2;
         }
         if ($verify->code != $otp) {
-            return 4; // otp khong khop voi ban ghi
+            return 3;
         }
-        return 0; // thanh cong
+        return 0;
     }
 
     public function randomOTP()
@@ -70,19 +70,5 @@ class OTPService
             ->update([
                 'submit' => 1,
             ]);
-    }
-
-    public function checkLatestOTP($email)
-    {
-        $otp = $this->getLatestOTP($email);
-        if (
-            $otp
-            && $otp->submit == 0
-            && Carbon::parse($otp->expired_in)->isPast()
-        ) {
-            return false;
-        }
-
-        return true;
     }
 }
