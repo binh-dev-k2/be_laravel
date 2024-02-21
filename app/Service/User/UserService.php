@@ -5,9 +5,11 @@ namespace App\Service\User;
 use App\Models\User;
 use Illuminate\Support\Str;
 
-class UserService {
+class UserService
+{
 
-    public function findUserByEmail($email) {
+    public function findUserByEmail($email)
+    {
         return User::where('email', $email)->first();
     }
 
@@ -18,6 +20,7 @@ class UserService {
             'uuid' => Str::uuid(),
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'status' => User::STATUS_ACTIVE
         ]);
     }
 }
