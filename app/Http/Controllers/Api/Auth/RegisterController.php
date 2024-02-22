@@ -26,7 +26,7 @@ class RegisterController extends Controller
         $user = $this->userService->findUserByEmail($data['email']);
         if (!$user) {
             $user = $this->userService->createUser($data);
-            $this->OTPService->sendOTP($user->email);
+            $this->OTPService->sendOTP($data['email']);
             return xmlSuccessResponse(0);
         }
 
@@ -36,6 +36,7 @@ class RegisterController extends Controller
                 $this->OTPService->sendOTP($data['email']);
                 return xmlSuccessResponse(0);
             }
+            return xmlSuccessResponse(2);
         }
         return xmlErrorResponse(1, ['user da ton tai roi']);
     }
