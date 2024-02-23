@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthRequest;
-use App\Service\OTP\OTPService;
-use App\Service\User\UserService;
+use App\Services\OTP\OTPService;
+use App\Services\User\UserService;
 use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
-    private $OTPService;
-    private $userService;
+    protected $OTPService;
+    protected $userService;
 
     public function __construct(OTPService $OTPService, UserService $userService)
     {
@@ -22,17 +22,17 @@ class RegisterController extends Controller
     public function register(AuthRequest $request)
     {
         $data = $request->validated();
-
         $user = $this->userService->findUserByEmail($data['email']);
+
         if (!$user) {
             $user = $this->userService->createUser($data);
             $this->OTPService->sendOTP($data['email']);
             return xmlResponse(0); // thanh cong
         }
 
-        if (!$user->email_verified_at) {
-            $otp = $this->OTPService->getLastestOTP($data['email']);
-            if ($otp->submit == 0 && Carbon::parse($otp->expired_in)->isPast()) {
+        if (!$user->hasVerifiedEmail()) {
+            $checkLatestOTP = $this->OTPService->checkLatestOTP($data['email']);
+            if (!$checkLatestOTP) {
                 $this->OTPService->sendOTP($data['email']);
                 return xmlResponse(0);
             }
@@ -55,7 +55,7 @@ class RegisterController extends Controller
         $user = $this->userService->findUserByEmail($data['email']);
         $user->email_verified_at = Carbon::now()->getTimestamp();
         $user->save();
-        return xmlResponse(0); // thanh cong
+        return xmlResponse(0);
     }
 
 
@@ -64,8 +64,8 @@ class RegisterController extends Controller
     {
         $data = $request->validated();
 
-        $verify = $this->OTPService->getLastestOTP($data['email']);
-        if ($verify->submit == 0 && Carbon::parse($verify->expired_in)->isPast()) {
+        $checkLatestOTP = $this->OTPService->checkLatestOTP($data['email']);
+        if (!$checkLatestOTP) {
             $this->OTPService->sendOTP($data['email']);
             return xmlResponse(0);
         }
