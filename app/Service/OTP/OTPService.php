@@ -47,15 +47,15 @@ class OTPService
         $verify = $this->getLastestOTP($email);
 
         if (empty($verify)) {
-            return 1;
+            return 2; // khong tim thay otp
         }
         if (Carbon::parse($verify->expired_in)->isPast()) {
-            return 2;
+            return 3; // otp qua han
         }
         if ($verify->code != $otp) {
-            return 3;
+            return 4; // otp khong khop voi ban ghi
         }
-        return 0;
+        return 0; // thanh cong
     }
 
     public function randomOTP()

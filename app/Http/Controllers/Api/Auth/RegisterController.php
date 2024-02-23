@@ -27,18 +27,18 @@ class RegisterController extends Controller
         if (!$user) {
             $user = $this->userService->createUser($data);
             $this->OTPService->sendOTP($data['email']);
-            return xmlSuccessResponse(0);
+            return xmlResponse(0); // thanh cong
         }
 
         if (!$user->email_verified_at) {
             $otp = $this->OTPService->getLastestOTP($data['email']);
             if ($otp->submit == 0 && Carbon::parse($otp->expired_in)->isPast()) {
                 $this->OTPService->sendOTP($data['email']);
-                return xmlSuccessResponse(0);
+                return xmlResponse(0);
             }
-            return xmlSuccessResponse(2);
+            return xmlResponse(3); // van con thoi gian cho otp
         }
-        return xmlErrorResponse(1, ['user da ton tai roi']);
+        return xmlResponse(2); // loi da ton tai user
     }
 
 
@@ -49,13 +49,13 @@ class RegisterController extends Controller
 
         $verify = $this->OTPService->verifyOTP($data['email'], $data['code']);
         if ($verify !== 0) {
-            return xmlErrorResponse($verify);
+            return xmlResponse($verify); // loi theo code
         }
 
         $user = $this->userService->findUserByEmail($data['email']);
         $user->email_verified_at = Carbon::now()->getTimestamp();
         $user->save();
-        return xmlSuccessResponse(0);
+        return xmlResponse(0); // thanh cong
     }
 
 
@@ -67,9 +67,9 @@ class RegisterController extends Controller
         $verify = $this->OTPService->getLastestOTP($data['email']);
         if ($verify->submit == 0 && Carbon::parse($verify->expired_in)->isPast()) {
             $this->OTPService->sendOTP($data['email']);
-            return xmlSuccessResponse(0);
+            return xmlResponse(0);
         }
 
-        return xmlErrorResponse(1);
+        return xmlResponse(2); // otp da submit hoac van con thoi han
     }
 }

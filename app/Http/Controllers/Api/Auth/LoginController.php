@@ -15,14 +15,14 @@ class LoginController extends Controller
         $credentials = ['email' => $data['email'], 'password' => $data['password']];
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            if (!$user->email_verified_at) return xmlErrorResponse(2);
+            if (!$user->email_verified_at) return xmlResponse(2);
 
             $response = [
                 'token' => 'Bearer ' . $user->createToken('App')->accessToken
             ];
-            return xmlSuccessResponse(0, $response);
+            return xmlResponse(0, $response);
         }
 
-        return xmlErrorResponse(1, $data = []);
+        return xmlResponse(2); // tai khoan hoac mat khau khong khop
     }
 }
