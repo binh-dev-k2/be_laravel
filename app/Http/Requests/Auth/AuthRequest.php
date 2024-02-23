@@ -62,6 +62,6 @@ class AuthRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
-        throw new HttpResponseException(xmlErrorResponse(1, $errors));
+        throw new HttpResponseException(xmlResponse(1, $errors));
     }
 }
