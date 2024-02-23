@@ -18,18 +18,7 @@ function xmlResponse($code, $data = [])
     );
 }
 
-function successResponse($code, $data = [])
-{
-    return response()->json(
-        [
-            'data' => $data,
-            'code' => $code,
-        ],
-        200
-    );
-}
-
-function errorResponse($code, $data = [])
+function jsonResponse($code, $data = [])
 {
     return response()->json(
         [
