@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Couple\Couple;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -12,6 +13,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    protected $table = "users";
 
     const STATUS_ACTIVE = 1;
     const STATUS_BLOCK = 0;
@@ -52,4 +55,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasVerifiedEmail()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function hasBeenBlocked()
+    {
+        return $this->status == self::STATUS_BLOCK;
+    }
+
+    public function couples()
+    {
+        return $this->hasMany(Couple::class, 'first_user_uuid', 'uuid')
+            ->orWhere('second_user_uuid', $this->uuid);
+    }
 }

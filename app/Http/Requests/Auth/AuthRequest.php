@@ -31,16 +31,16 @@ class AuthRequest extends FormRequest
         switch ($action) {
             case 'register':
                 return [
-                    'email' => 'required|email|max:150',
-                    'password' => 'required|min:6|max:255|confirmed',
+                    'email' => 'required|email|string|max:150',
+                    'password' => 'required|string|min:6|max:255|confirmed',
                     'name' => 'required|max:255',
                 ];
                 break;
 
             case 'login':
                 return [
-                    'email' => 'required|string',
-                    'password' => 'required|string',
+                    'email' => 'required|email|string|max:150',
+                    'password' => 'required|string|min:6|max:255',
                 ];
                 break;
 
