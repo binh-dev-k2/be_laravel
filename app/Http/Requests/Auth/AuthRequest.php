@@ -30,6 +30,12 @@ class AuthRequest extends FormRequest
         $action = $arr[1];
 
         switch ($action) {
+            case 'checkEmail':
+                return [
+                    'email' => 'required|email|string|max:150',
+                ];
+                break;
+
             case 'register':
                 return [
                     'email' => 'required|email|string|max:150',
