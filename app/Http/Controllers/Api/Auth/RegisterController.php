@@ -115,6 +115,18 @@ class RegisterController extends Controller
     }
 
 
+    public  function checkEmail(AuthRequest $request)
+    {
+        $data = $request->validated();
+        $user = $this->userService->findUserByEmail($data['email']);
+
+        if (!$user) {
+            return xmlResponse(0);
+        }
+        return xmlResponse(2);
+    }
+
+
     // verify user email
     public function verifyEmail(AuthRequest $request)
     {
