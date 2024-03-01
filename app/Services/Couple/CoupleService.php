@@ -3,17 +3,9 @@
 namespace App\Services\Couple;
 
 use App\Models\Couple\Couple;
-use App\Services\User\UserService;
 
 class CoupleService
 {
-    protected $userService;
-
-    public function __construct(UserService $userService)
-    {
-        $this->userService = $userService;
-    }
-
     public function getUserCouples($invitedUser, $status = null)
     {
         $query = $invitedUser->couples();

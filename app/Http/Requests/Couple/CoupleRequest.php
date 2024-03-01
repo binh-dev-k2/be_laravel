@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Couple;
 
+use App\Models\Couple\CoupleInvitation;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -32,6 +33,16 @@ class CoupleRequest extends FormRequest
             case 'invite':
                 return [
                     'invited_email' => 'required|email'
+                ];
+                break;
+
+            case 'updateInvite':
+                return [
+                    'user_uuid' => 'required|uuid',
+                    'status' => ['required', 'in:' . implode(',', [
+                        CoupleInvitation::STATUS_ACCEPTED,
+                        CoupleInvitation::STATUS_REJECTED
+                    ])]
                 ];
                 break;
         }

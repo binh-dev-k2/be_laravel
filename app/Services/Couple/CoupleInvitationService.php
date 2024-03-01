@@ -3,6 +3,7 @@
 namespace App\Services\Couple;
 
 use App\Models\Couple\CoupleInvitation;
+use Illuminate\Support\Facades\Auth;
 
 class CoupleInvitationService
 {
@@ -15,11 +16,32 @@ class CoupleInvitationService
         ]);
     }
 
-    public function checkInvitedUserBefore($fromUuid, $toUuid)
+    public function checkPreviousInvitation($userUuid)
     {
-        return !!CoupleInvitation::where('from_uuid', $fromUuid)
-            ->where('to_uuid', $toUuid)
+        return !!CoupleInvitation::where('from_uuid', $userUuid)
             ->where('status', CoupleInvitation::STATUS_PENDING)
             ->first();
+    }
+
+    public function updateInvitation($userUuid, $status)
+    {
+        $currentUserUuid = Auth::user()->uuid;
+        $invitation = CoupleInvitation::query()
+            ->where('from_uuid', $currentUserUuid)
+            ->where('status', CoupleInvitation::STATUS_PENDING);
+
+        if ($currentUserUuid == $userUuid) {
+            $invitation->first();
+        } else {
+            $invitation->where('to_uuid', $userUuid)->first();
+        }
+        if (!$invitation) {
+            return false;
+        }
+        $invitation->update(['status' => $status]);
+        if ($currentUserUuid == $userUuid) {
+            // Gui thong bao cho user o day
+        }
+        return true;
     }
 }
