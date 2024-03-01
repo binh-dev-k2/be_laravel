@@ -14,7 +14,6 @@ class CoupleInvitation extends Model
     protected $guarded = [];
 
     const STATUS_PENDING = 0;
-    const STATUS_ACCEPT = 1;
-    const STATUS_DENY = 2;
-    const STATUS_REJECT = 4;
+    const STATUS_ACCEPTED = 1;
+    const STATUS_REJECTED = 2;
 }

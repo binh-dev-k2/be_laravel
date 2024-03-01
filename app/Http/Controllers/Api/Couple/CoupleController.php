@@ -33,22 +33,31 @@ class CoupleController extends Controller
             return jsonResponse(2); // user khong doc than
         }
 
+        $check = $this->coupleInvitationService->checkPreviousInvitation($currentUser->uuid);
+        if ($check) {
+            return jsonResponse(3); // da co loi invite truoc do va van dang pending
+        }
+
         $invitedUser = $this->userService->findUserByEmail($data['invited_email']);
         if (!$invitedUser) {
-            return jsonResponse(3); // khong ton tai user duoc invite
+            return jsonResponse(4); // khong ton tai user duoc invite
         }
 
         $isInvitedUserSingle = $this->coupleService->isSingle($invitedUser);
         if (!$isInvitedUserSingle) {
-            return jsonResponse(4); // user duoc gui loi moi da co couple
-        }
-
-        $check = $this->coupleInvitationService->checkInvitedUserBefore($currentUser->uuid, $invitedUser->uuid);
-        if ($check) {
-            return jsonResponse(5); // da co loi invite truoc do va van dang pending
+            return jsonResponse(5); // user duoc gui loi moi da co couple
         }
 
         $this->coupleInvitationService->sendInvite($currentUser->uuid, $invitedUser->uuid);
         return jsonResponse(0);
+    }
+
+    public function updateInvite(CoupleRequest $request)
+    {
+        $data = $request->validated();
+        $isSuccessful = $this->coupleInvitationService->updateInvitation($data['user_uuid'], $data['status']);
+
+        if ($isSuccessful) return jsonResponse(0);
+        return jsonResponse(2);
     }
 }
