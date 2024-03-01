@@ -38,4 +38,13 @@ class CoupleController extends Controller
 
         return jsonResponse($status);
     }
+
+    public function updateInvite(CoupleRequest $request)
+    {
+        $data = $request->validated();
+        $isSuccessful = $this->coupleInvitationService->updateInvitation($data['user_uuid'], $data['status']);
+
+        if ($isSuccessful) return jsonResponse(0);
+        return jsonResponse(2);
+    }
 }
