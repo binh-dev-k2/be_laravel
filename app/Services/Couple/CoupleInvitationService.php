@@ -71,6 +71,7 @@ class CoupleInvitationService
         } catch (Exception $e) {
             DB::rollBack();
             Log::error(date("Y-m-d H:i:s") . ": " . $e->getMessage());
+            return false;
         }
     }
 }
