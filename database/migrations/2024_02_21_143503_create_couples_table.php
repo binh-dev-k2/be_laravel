@@ -21,8 +21,8 @@ class CreateCouplesTable extends Migration
             $table->tinyInteger('status');
             $table->string('nickname')->nullable();
             $table->string('header_title')->nullable();
-            $table->uuid('saved_first_user_uuid')->nullable();
-            $table->uuid('saved_second_user_uuid')->nullable();
+            $table->uuid('saved_first_user_uuid');
+            $table->uuid('saved_second_user_uuid');
             $table->timestamps();
         });
     }

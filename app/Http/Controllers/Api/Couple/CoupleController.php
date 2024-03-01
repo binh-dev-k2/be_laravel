@@ -58,6 +58,6 @@ class CoupleController extends Controller
         $isSuccessful = $this->coupleInvitationService->updateInvitation($data['user_uuid'], $data['status']);
 
         if ($isSuccessful) return jsonResponse(0);
-        return jsonResponse(2);
+        return jsonResponse(2); // Khong tim thay loi moi
     }
 }

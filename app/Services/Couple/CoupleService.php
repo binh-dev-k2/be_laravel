@@ -2,6 +2,7 @@
 
 namespace App\Services\Couple;
 
+use Illuminate\Support\Str;
 use App\Models\Couple\Couple;
 
 class CoupleService
@@ -29,5 +30,16 @@ class CoupleService
         }
 
         return true;
+    }
+
+    public function createCouple($firstUserUuid, $secondUserUuid) {
+        return Couple::create([
+            'uuid' => Str::uuid(),
+            'first_user_uuid' => $firstUserUuid,
+            'second_user_uuid' => $secondUserUuid,
+            'status' => Couple::STATUS_IN_LOVE,
+            'saved_first_user_uuid' => $firstUserUuid,
+            'saved_second_user_uuid' => $secondUserUuid
+        ]);
     }
 }
