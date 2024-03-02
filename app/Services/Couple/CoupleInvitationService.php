@@ -3,7 +3,7 @@
 namespace App\Services\Couple;
 
 use App\Models\Couple\CoupleInvitation;
-use Carbon\Carbon;
+use App\Services\User\UserService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,13 +12,42 @@ use Illuminate\Support\Facades\Log;
 class CoupleInvitationService
 {
     protected $coupleService;
+    protected $userService;
 
-    public function __construct(CoupleService $coupleService)
+    public function __construct(CoupleService $coupleService, UserService $userService)
     {
         $this->coupleService = $coupleService;
+        $this->userService = $userService;
     }
 
-    public function sendInvite($fromUuid, $toUuid)
+    public function makeInvitation($data)
+    {
+        $currentUser = Auth::user();
+        $isCurrentUserSingle = $this->coupleService->isSingle($currentUser);
+        if (!$isCurrentUserSingle) {
+            return 2; // user khong doc than
+        }
+
+        $previosInvitation = $this->checkPreviousInvitation($currentUser->uuid);
+        if ($previosInvitation) {
+            return 3; // da co loi invite truoc do va van dang pending
+        }
+
+        $invitedUser = $this->userService->findUserByEmail($data['invited_email']);
+        if (!$invitedUser) {
+            return 4; // khong ton tai user duoc invite
+        }
+
+        $isInvitedUserSingle = $this->coupleService->isSingle($invitedUser);
+        if (!$isInvitedUserSingle) {
+            return 5; // user duoc gui loi moi da co couple
+        }
+
+        $this->createInvitation($currentUser->uuid, $invitedUser->uuid);
+        return 0;
+    }
+
+    public function createInvitation($fromUuid, $toUuid)
     {
         return CoupleInvitation::create([
             'from_uuid' => $fromUuid,
@@ -29,7 +58,7 @@ class CoupleInvitationService
 
     public function checkPreviousInvitation($userUuid)
     {
-        return !!CoupleInvitation::where('from_uuid', $userUuid)
+        return CoupleInvitation::where('from_uuid', $userUuid)
             ->where('status', CoupleInvitation::STATUS_PENDING)
             ->first();
     }
@@ -43,10 +72,9 @@ class CoupleInvitationService
     {
         $invitation = $this->findInvitationById($data['invitation_id']);
         if (!$invitation) {
-            return 2; // khong tim thay
+            return 2; // khong tim thay id
         }
         try {
-            DB::beginTransaction();
             switch ($data['status']) {
                 case CoupleInvitation::STATUS_REJECTED:
                     return $this->rejectInvitation($invitation); // tu choi
@@ -55,20 +83,16 @@ class CoupleInvitationService
                 case CoupleInvitation::STATUS_ACCEPTED:
                     return $this->acceptedInvitation($invitation);
             }
-
-            DB::commit();
-            return true;
         } catch (Exception $e) {
-            DB::rollBack();
             Log::error(date("Y-m-d H:i:s") . ": " . $e->getMessage());
-            return false;
+            return 6; // Loi khong xac dinh
         }
     }
 
     public function rejectInvitation($invitation)
     {
         if (Auth::user()->uuid != $invitation->to_uuid) {
-            return 2; // khong phai user duoc moi tu choi
+            return 3; // khong phai user duoc moi tu choi
         }
         $invitation->status = CoupleInvitation::STATUS_REJECTED;
         $invitation->save();
@@ -81,7 +105,7 @@ class CoupleInvitationService
     public function deniedInvitation($invitation)
     {
         if (Auth::user()->uuid != $invitation->from_uuid) {
-            return 3;
+            return 4;
         }
         $invitation->status = CoupleInvitation::STATUS_DENIED;
         $invitation->save();
@@ -91,7 +115,7 @@ class CoupleInvitationService
     public function acceptedInvitation($invitation)
     {
         if (Auth::user()->uuid != $invitation->to_uuid) {
-            return 4; // khong phai user duoc moi dong y
+            return 5; // khong phai user duoc moi dong y
         }
         $invitation->status = CoupleInvitation::STATUS_ACCEPTED;
         $invitation->save();
