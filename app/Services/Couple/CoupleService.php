@@ -4,6 +4,8 @@ namespace App\Services\Couple;
 
 use Illuminate\Support\Str;
 use App\Models\Couple\Couple;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CoupleService
 {
@@ -32,7 +34,8 @@ class CoupleService
         return true;
     }
 
-    public function createCouple($firstUserUuid, $secondUserUuid) {
+    public function createCouple($firstUserUuid, $secondUserUuid)
+    {
         return Couple::create([
             'uuid' => Str::uuid(),
             'first_user_uuid' => $firstUserUuid,
@@ -40,6 +43,14 @@ class CoupleService
             'status' => Couple::STATUS_IN_LOVE,
             'saved_first_user_uuid' => $firstUserUuid,
             'saved_second_user_uuid' => $secondUserUuid
+        ]);
+    }
+
+    public function createCoupleTimeline($couple)
+    {
+        return DB::table('couple_timelines')->insert([
+            'couple_uuid' => $couple['uuid'],
+            'start_date' => Carbon::now()->format("Y-m-d")
         ]);
     }
 }

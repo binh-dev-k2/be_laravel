@@ -55,9 +55,8 @@ class CoupleController extends Controller
     public function updateInvite(CoupleRequest $request)
     {
         $data = $request->validated();
-        $isSuccessful = $this->coupleInvitationService->updateInvitation($data['user_uuid'], $data['status']);
+        $status = $this->coupleInvitationService->updateInvitation($data);
 
-        if ($isSuccessful) return jsonResponse(0);
-        return jsonResponse(2); // Khong tim thay loi moi
+        return jsonResponse($status);
     }
 }
