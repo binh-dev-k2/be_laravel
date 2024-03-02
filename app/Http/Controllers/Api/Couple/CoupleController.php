@@ -23,6 +23,17 @@ class CoupleController extends Controller
         $this->coupleInvitationService = $coupleInvitationService;
     }
 
+    public function getCurrentCouple()
+    {
+        $myCouple = $this->coupleService->getInLoveCoupleByUser(Auth::user());
+        if (!$myCouple) {
+            return jsonResponse(2); // dang doc than -.-
+        }
+        $currentTimeline = $this->coupleService->getCurrentTimeline($myCouple);
+        $myCouple->start_date = $currentTimeline->start_date;
+        return jsonResponse(0, $myCouple);
+    }
+
     public function invite(CoupleRequest $request)
     {
         $data = $request->validated();
@@ -37,14 +48,5 @@ class CoupleController extends Controller
         $status = $this->coupleInvitationService->updateInvitation($data);
 
         return jsonResponse($status);
-    }
-
-    public function updateInvite(CoupleRequest $request)
-    {
-        $data = $request->validated();
-        $isSuccessful = $this->coupleInvitationService->updateInvitation($data['user_uuid'], $data['status']);
-
-        if ($isSuccessful) return jsonResponse(0);
-        return jsonResponse(2); // Khong tim thay loi moi
     }
 }

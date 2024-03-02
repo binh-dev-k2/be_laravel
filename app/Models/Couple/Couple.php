@@ -16,13 +16,17 @@ class Couple extends Model
     const STATUS_OUT_LOVE = 0;
     const STATUS_IN_LOVE = 1;
 
-    public function scopeInLove($query)
-    {
-        return $query->where('status', self::STATUS_IN_LOVE);
+    // public function scopeInLove($query)
+    // {
+    //     return $query->where('status', self::STATUS_IN_LOVE);
 
-    }
-    public function scopeOutLove($query)
-    {
-        return $query->where('status', self::STATUS_OUT_LOVE);
+    // }
+    // public function scopeOutLove($query)
+    // {
+    //     return $query->where('status', self::STATUS_OUT_LOVE);
+    // }
+
+    public function timeLine() {
+        return $this->hasMany(CoupleTimeline::class, 'couple_uuid', 'uuid');
     }
 }
