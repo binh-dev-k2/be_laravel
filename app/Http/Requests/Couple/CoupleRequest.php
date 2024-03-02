@@ -38,10 +38,11 @@ class CoupleRequest extends FormRequest
 
             case 'updateInvite':
                 return [
-                    'user_uuid' => 'required|uuid',
+                    'invitation_id' => 'required',
                     'status' => ['required', 'in:' . implode(',', [
                         CoupleInvitation::STATUS_ACCEPTED,
-                        CoupleInvitation::STATUS_REJECTED
+                        CoupleInvitation::STATUS_REJECTED,
+                        CoupleInvitation::STATUS_DENIED
                     ])]
                 ];
                 break;
