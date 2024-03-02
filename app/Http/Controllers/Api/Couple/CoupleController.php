@@ -26,30 +26,9 @@ class CoupleController extends Controller
     public function invite(CoupleRequest $request)
     {
         $data = $request->validated();
-        $currentUser = Auth::user();
+        $status = $this->coupleInvitationService->makeInvitation($data);
 
-        $isCurrentUserSingle = $this->coupleService->isSingle($currentUser);
-        if (!$isCurrentUserSingle) {
-            return jsonResponse(2); // user khong doc than
-        }
-
-        $check = $this->coupleInvitationService->checkPreviousInvitation($currentUser->uuid);
-        if ($check) {
-            return jsonResponse(3); // da co loi invite truoc do va van dang pending
-        }
-
-        $invitedUser = $this->userService->findUserByEmail($data['invited_email']);
-        if (!$invitedUser) {
-            return jsonResponse(4); // khong ton tai user duoc invite
-        }
-
-        $isInvitedUserSingle = $this->coupleService->isSingle($invitedUser);
-        if (!$isInvitedUserSingle) {
-            return jsonResponse(5); // user duoc gui loi moi da co couple
-        }
-
-        $this->coupleInvitationService->sendInvite($currentUser->uuid, $invitedUser->uuid);
-        return jsonResponse(0);
+        return jsonResponse($status);
     }
 
     public function updateInvite(CoupleRequest $request)
