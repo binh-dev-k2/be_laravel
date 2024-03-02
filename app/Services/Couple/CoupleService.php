@@ -4,33 +4,40 @@ namespace App\Services\Couple;
 
 use Illuminate\Support\Str;
 use App\Models\Couple\Couple;
+use App\Models\Couple\CoupleTimeline;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class CoupleService
 {
-    public function getUserCouples($invitedUser, $status = null)
+    public function getInLoveCoupleByUser($user)
     {
-        $query = $invitedUser->couples();
+        return Couple::where('first_user_uuid', $user->uuid)
+            ->orWhere('second_user_uuid', $user->uuid)
+            ->where('status', Couple::STATUS_IN_LOVE)
+            ->first();
+    }
 
-        if ($status == Couple::STATUS_IN_LOVE) {
-            $query->inLove();
-        } elseif ($status == Couple::STATUS_OUT_LOVE) {
-            $query->outLove();
-        }
+    public function getOutLoveCoupleByUser($user)
+    {
+        return Couple::where('first_user_uuid', $user->uuid)
+            ->orWhere('second_user_uuid', $user->uuid)
+            ->where('status', Couple::STATUS_OUT_LOVE)
+            ->get();
+    }
 
-        $userCouples = $query->latest()->get();
-
-        return $userCouples;
+    public function getListCoupleByUser($user)
+    {
+        return Couple::where('first_user_uuid', $user->uuid)
+            ->orWhere('second_user_uuid', $user->uuid)
+            ->get();
     }
 
     public function isSingle($user)
     {
-        $inLoveUserCouple = $this->getUserCouples($user, Couple::STATUS_IN_LOVE);
-        if (count($inLoveUserCouple) > 0) {
+        $inLoveUserCouple = $this->getInLoveCoupleByUser($user);
+        if ($inLoveUserCouple) {
             return false; // user duoc gui loi moi da co couple
         }
-
         return true;
     }
 
@@ -48,9 +55,16 @@ class CoupleService
 
     public function createCoupleTimeline($couple)
     {
-        return DB::table('couple_timelines')->insert([
+        return CoupleTimeline::create([
             'couple_uuid' => $couple['uuid'],
             'start_date' => Carbon::now()->format("Y-m-d")
         ]);
+    }
+
+    public function getCurrentTimeline($couple)
+    {
+        return CoupleTimeline::where('couple_uuid', $couple->uuid)
+            ->whereNull('end_date')
+            ->first();
     }
 }
