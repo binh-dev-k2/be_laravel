@@ -44,17 +44,18 @@ class OTPService
     // Verify user code
     public function verifyOTP($email, $otp)
     {
-        $verify = $this->getLatestOTP($email);
+        $otp = $this->getLatestOTP($email);
 
-        if (empty($verify)) {
+        if (empty($otp)) {
             return 2;
         }
-        if (Carbon::parse($verify->expired_in)->isPast()) {
+        if (Carbon::parse($otp->expired_in)->isPast()) {
             return 3;
         }
-        if ($verify->code != $otp) {
+        if ($otp->code != $otp) {
             return 4;
         }
+        $this->submitOTP($otp->id);
         return 0;
     }
 
@@ -63,10 +64,10 @@ class OTPService
         return rand(100000, 999999);
     }
 
-    public function submitOTP($email)
+    public function submitOTP($id)
     {
         $this->db
-            ->where('email', $email)
+            ->where('id', $id)
             ->update([
                 'submit' => 1,
             ]);
