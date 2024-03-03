@@ -4,29 +4,23 @@ namespace App\Services\OTP;
 
 use App\Jobs\SendMail;
 use App\Mail\VerifyEmail;
+use App\Models\OTPUser;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class OTPService
 {
-    private $db;
-    private $penddingOTP = 5;
-
-    public function __construct()
-    {
-        $this->db = DB::table('otp_users');
-    }
+    private $penddingOTP = 5; //minutes
 
     // Send a user code to email
     public function sendOTP($email)
     {
+        $this->clearOldOTP($email);
         $code = $this->randomOTP();
-        $this->db
-            ->insert([
-                'email' => $email,
-                'code' => $code,
-                'expired_in' => Carbon::now()->addMinutes($this->penddingOTP),
-            ]);
+        OTPUser::create([
+            'email' => $email,
+            'code' => $code,
+            'expired_in' => Carbon::now()->addMinutes($this->penddingOTP),
+        ]);
 
         dispatch(new SendMail($email, new VerifyEmail($code)));
     }
@@ -34,15 +28,13 @@ class OTPService
     // get lastest user otp
     public function getLatestOTP($email)
     {
-        return $this->db
-            ->where('email', $email)
+        return OTPUser::where('email', $email)
             ->latest()
             ->first();
     }
 
-
     // Verify user code
-    public function verifyOTP($email, $otp)
+    public function verifyOTP($email, $code)
     {
         $otp = $this->getLatestOTP($email);
 
@@ -52,7 +44,7 @@ class OTPService
         if (Carbon::parse($otp->expired_in)->isPast()) {
             return 3;
         }
-        if ($otp->code != $otp) {
+        if ($otp->code != $code) {
             return 4;
         }
         $this->submitOTP($otp->id);
@@ -66,8 +58,7 @@ class OTPService
 
     public function submitOTP($id)
     {
-        $this->db
-            ->where('id', $id)
+        OTPUser::where('id', $id)
             ->update([
                 'submit' => 1,
             ]);
@@ -83,7 +74,11 @@ class OTPService
         ) {
             return false;
         }
-
         return true;
+    }
+
+    public function clearOldOTP($email)
+    {
+        return OTPUser::where('email', $email)->delete();
     }
 }
