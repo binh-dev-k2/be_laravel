@@ -47,7 +47,7 @@ class OTPService
         if ($otp->code != $code) {
             return 4;
         }
-        $this->submitOTP($otp->id);
+        $this->submitOTP($otp);
         return 0;
     }
 
@@ -56,12 +56,10 @@ class OTPService
         return rand(100000, 999999);
     }
 
-    public function submitOTP($id)
+    public function submitOTP($otp)
     {
-        OTPUser::where('id', $id)
-            ->update([
-                'submit' => 1,
-            ]);
+        $otp->status = 1;
+        $otp->save();
     }
 
     public function isOTPExpired($email)
