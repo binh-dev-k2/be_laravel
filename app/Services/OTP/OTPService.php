@@ -80,9 +80,9 @@ class OTPService
             && $otp->submit == 0
             && Carbon::parse($otp->expired_in)->isPast()
         ) {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
