@@ -49,7 +49,7 @@ class OTPService
         if (empty($verify)) {
             return 2;
         }
-        if (Carbon::parse($verify->end_time)->isPast()) {
+        if (Carbon::parse($verify->expired_in)->isPast()) {
             return 3;
         }
         if ($verify->code != $otp) {
