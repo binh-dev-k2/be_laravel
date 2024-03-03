@@ -58,7 +58,7 @@ class OTPService
 
     public function submitOTP($otp)
     {
-        $otp->status = 1;
+        $otp->submit = 1;
         $otp->save();
     }
 
