@@ -61,29 +61,42 @@ class RegisterController extends Controller
      *      ),
      *      @OA\Response(
      *          response=200,
-     *          description="Success",
+     *          description="Thành công",
      *          @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
      *                  type="string",
-     *                  example="<xml>Success</xml>"
+     *                  example="<?xml version="1.0" encoding="utf-8"?>
+                                <response>
+                                    <data/>
+                                    <code>0</code>
+                                </response>"
      *              )
      *          )
      *      ),
      *      @OA\Response(
-     *          response=400,
-     *          description="Bad Request",
+     *          response=200,
+     *          description="User đã tồn tại",
      *          @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
      *                  type="string",
-     *                  example="<xml>Error: user da ton tai roi</xml>"
+     *                  example="<?xml version="1.0" encoding="utf-8"?>
+                        <response>
+                            <data/>
+                            <code>2</code>
+                        </response>"
      *              )
      *          )
      *      ),
      *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated"
+     *          response=200,
+     *          description="Vẫn còn thời gian chờ OTP, chuyển qua màn hình chờ OTP"
+     *          example="<?xml version="1.0" encoding="utf-8"?>
+                <response>
+                    <data/>
+                    <code>3</code>
+                </response>"
      *      ),
      *      @OA\Response(
      *          response=403,
