@@ -73,7 +73,7 @@ class OTPService
             ]);
     }
 
-    public function checkLatestOTP($email)
+    public function isOTPExpired($email)
     {
         $otp = $this->getLatestOTP($email);
         if (
@@ -81,9 +81,9 @@ class OTPService
             && $otp->submit == 0
             && Carbon::parse($otp->expired_in)->isPast()
         ) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 }
