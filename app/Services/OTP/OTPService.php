@@ -47,13 +47,13 @@ class OTPService
         $verify = $this->getLatestOTP($email);
 
         if (empty($verify)) {
-            return 1;
-        }
-        if (Carbon::parse($verify->end_time)->isPast()) {
             return 2;
         }
-        if ($verify->code != $otp) {
+        if (Carbon::parse($verify->end_time)->isPast()) {
             return 3;
+        }
+        if ($verify->code != $otp) {
+            return 4;
         }
         return 0;
     }

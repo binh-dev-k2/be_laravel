@@ -105,7 +105,7 @@ class CoupleInvitationService
     public function deniedInvitation($invitation)
     {
         if (Auth::user()->uuid != $invitation->from_uuid) {
-            return 4;
+            return 4;// khong phai user moi huy yeu cau
         }
         $invitation->status = CoupleInvitation::STATUS_DENIED;
         $invitation->save();
