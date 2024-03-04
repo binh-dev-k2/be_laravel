@@ -59,44 +59,42 @@ class RegisterController extends Controller
      *              )
      *          )
      *      ),
-     *      @OA\Response(
+     *    @OA\Response(
      *          response=200,
-     *          description="Thành công",
+     *          description="Success",
      *          @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
+     *                   property="root",
      *                  type="string",
-     *                  example="<?xml version="1.0" encoding="utf-8"?>
-                                <response>
-                                    <data/>
-                                    <code>0</code>
-                                </response>"
+     *                  example="<xml>Success</xml>"
      *              )
      *          )
      *      ),
      *      @OA\Response(
-     *          response=200,
+     *          response=400,
      *          description="User đã tồn tại",
      *          @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
      *                  type="string",
-     *                  example="<?xml version="1.0" encoding="utf-8"?>
-                        <response>
-                            <data/>
-                            <code>2</code>
-                        </response>"
+     *                  example="<xml>Success</xml>"
      *              )
      *          )
      *      ),
      *      @OA\Response(
-     *          response=200,
-     *          description="Vẫn còn thời gian chờ OTP, chuyển qua màn hình chờ OTP"
-     *          example="<?xml version="1.0" encoding="utf-8"?>
-                <response>
-                    <data/>
-                    <code>3</code>
-                </response>"
+     *          response=401,
+     *          description="Vẫn còn thời gian chờ OTP, chuyển qua màn hình chờ OTP",
+     *         @OA\MediaType(
+     *              mediaType="application/xml",
+     *              @OA\Schema(
+     *                  type="string",
+     *                  example=" <response>
+                            <data></data>
+                            <code>3</code>
+                        </response>"
+     *              )
+     *          )
      *      ),
      *      @OA\Response(
      *          response=403,
@@ -104,7 +102,6 @@ class RegisterController extends Controller
      *      )
      * )
      */
-
     public function register(AuthRequest $request)
     {
         $data = $request->validated();

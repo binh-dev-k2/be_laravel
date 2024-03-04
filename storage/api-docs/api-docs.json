@@ -74,18 +74,26 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "User đã tồn tại",
                         "content": {
                             "application/xml": {
                                 "schema": {
                                     "type": "string",
-                                    "example": "<xml>Error: user da ton tai roi</xml>"
+                                    "example": "<xml>Success</xml>"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Vẫn còn thời gian chờ OTP, chuyển qua màn hình chờ OTP",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": " <response>\n                            <data></data>\n                            <code>3</code>\n                        </response>"
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Forbidden"
