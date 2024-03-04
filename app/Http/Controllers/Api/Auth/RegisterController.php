@@ -59,9 +59,21 @@ class RegisterController extends Controller
      *              )
      *          )
      *      ),
-     *      @OA\Response(
+     *    @OA\Response(
      *          response=200,
      *          description="Success",
+     *          @OA\MediaType(
+     *              mediaType="application/xml",
+     *              @OA\Schema(
+     *                   property="root",
+     *                  type="string",
+     *                  example="<xml>Success</xml>"
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="User đã tồn tại",
      *          @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
@@ -71,19 +83,18 @@ class RegisterController extends Controller
      *          )
      *      ),
      *      @OA\Response(
-     *          response=400,
-     *          description="Bad Request",
-     *          @OA\MediaType(
+     *          response=401,
+     *          description="Vẫn còn thời gian chờ OTP, chuyển qua màn hình chờ OTP",
+     *         @OA\MediaType(
      *              mediaType="application/xml",
      *              @OA\Schema(
      *                  type="string",
-     *                  example="<xml>Error: user da ton tai roi</xml>"
+     *                  example=" <response>
+                            <data></data>
+                            <code>3</code>
+                        </response>"
      *              )
      *          )
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated"
      *      ),
      *      @OA\Response(
      *          response=403,
@@ -91,7 +102,6 @@ class RegisterController extends Controller
      *      )
      * )
      */
-
     public function register(AuthRequest $request)
     {
         $data = $request->validated();
