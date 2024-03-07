@@ -1,9 +1,9 @@
 @component('mail::message')
-# Email Verification
+    # Email Verification
 
-Thank you for signing up.
-Your six-digit code is {{$code}}
+    Thank you for signing up.
+    Your six-digit code is {{ $code }}
 
-Thanks,<br>
-{{ config('app.name') }}
+    Thanks,<br>
+    {{ config('app.name') }}
 @endcomponent

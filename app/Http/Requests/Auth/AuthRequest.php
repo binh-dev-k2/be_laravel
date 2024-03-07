@@ -63,6 +63,19 @@ class AuthRequest extends FormRequest
                     'email' => 'required|string|exists:users',
                 ];
                 break;
+
+            case 'forgotPassword':
+                return [
+                    'email' => 'required|string|exists:users',
+                ];
+                break;
+
+            case 'VerifyOTPForgotPassword':
+                return [
+                    'email' => 'required|string|exists:users',
+                    'code' => 'required|numeric|min:100000|max:999999'
+                ];
+                break;
         }
     }
 

@@ -2,10 +2,7 @@
 
 namespace App\Services\OTP;
 
-use App\Jobs\SendMail;
 use App\Jobs\SendOTP;
-use App\Mail\SendOTPMail;
-use App\Mail\VerifyEmail;
 use App\Models\OTPUser;
 use Carbon\Carbon;
 

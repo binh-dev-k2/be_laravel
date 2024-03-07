@@ -42,11 +42,11 @@ class SendOTP implements ShouldQueue
             if ($isLatestOTPExpired) {
                 $code = $OTPService->generateOTP();
                 $OTPService->createOTPUser($this->email, $code);
-                Log::info("Mail to: " . $this->email);
+                Log::info("Send OTP: " . $this->email);
                 Mail::to($this->email)->send(new VerifyEmail($code));
             }
         } catch (Exception $e) {
-            Log::error(date("Y-m-d H:i:s") . "Mail to: " . $this->email . " Exception: " . $e->getMessage());
+            Log::error(date("Y-m-d H:i:s") . "Send OTP: " . $this->email . " Exception: " . $e->getMessage());
         }
     }
 }

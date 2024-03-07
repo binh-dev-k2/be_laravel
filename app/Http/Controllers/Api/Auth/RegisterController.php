@@ -142,9 +142,9 @@ class RegisterController extends Controller
     {
         $data = $request->validated();
 
-        $verify = $this->OTPService->verifyOTP($data['email'], $data['code']);
-        if ($verify !== 0) {
-            return xmlResponse($verify); // loi theo code
+        $verifyOTP = $this->OTPService->verifyOTP($data['email'], $data['code']);
+        if ($verifyOTP !== 0) {
+            return xmlResponse($verifyOTP); // loi theo code
         }
 
         $user = $this->userService->findUserByEmail($data['email']);

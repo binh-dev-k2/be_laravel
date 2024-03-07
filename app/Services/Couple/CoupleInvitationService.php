@@ -22,29 +22,34 @@ class CoupleInvitationService
 
     public function makeInvitation($data)
     {
-        $currentUser = Auth::user();
-        $isCurrentUserSingle = $this->coupleService->isUserSingle($currentUser);
-        if (!$isCurrentUserSingle) {
-            return 2; // user khong doc than
-        }
+        try {
+            $currentUser = Auth::user();
+            $isCurrentUserSingle = $this->coupleService->isUserSingle($currentUser);
+            if (!$isCurrentUserSingle) {
+                return 2; // user khong doc than
+            }
 
-        $previosInvitation = $this->checkPreviousInvitation($currentUser->uuid);
-        if ($previosInvitation) {
-            return 3; // da co loi invite truoc do va van dang pending
-        }
+            $previosInvitation = $this->checkPreviousInvitation($currentUser->uuid);
+            if ($previosInvitation) {
+                return 3; // da co loi invite truoc do va van dang pending
+            }
 
-        $invitedUser = $this->userService->findUserByEmail($data['invited_email']);
-        if (!$invitedUser) {
-            return 4; // khong ton tai user duoc invite
-        }
+            $invitedUser = $this->userService->findUserByEmail($data['invited_email']);
+            if (!$invitedUser) {
+                return 4; // khong ton tai user duoc invite
+            }
 
-        $isInvitedUserSingle = $this->coupleService->isUserSingle($invitedUser);
-        if (!$isInvitedUserSingle) {
-            return 5; // user duoc gui loi moi da co couple
-        }
+            $isInvitedUserSingle = $this->coupleService->isUserSingle($invitedUser);
+            if (!$isInvitedUserSingle) {
+                return 5; // user duoc gui loi moi da co couple
+            }
 
-        $this->createInvitation($currentUser->uuid, $invitedUser->uuid);
-        return 0;
+            $this->createInvitation($currentUser->uuid, $invitedUser->uuid);
+            return 0;
+        } catch (Exception $e) {
+            Log::error(date("Y-m-d H:i:s") . " Exception: " . $e->getMessage());
+            return 6;
+        }
     }
 
     public function createInvitation($senderUuid, $receiverUuid)
