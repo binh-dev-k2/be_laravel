@@ -16,14 +16,14 @@ class CreateCouplesTable extends Migration
         Schema::create('couples', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->uuid('first_user_uuid')->nullable();
-            $table->uuid('second_user_uuid')->nullable();
+            $table->uuid('sender_uuid')->nullable();
+            $table->uuid('receiver_uuid')->nullable();
             $table->tinyInteger('status');
-            $table->date('start_date');
+            $table->dateTime('start_time');
             $table->string('nickname')->nullable();
             $table->string('header_title')->nullable();
-            $table->uuid('saved_first_user_uuid');
-            $table->uuid('saved_second_user_uuid');
+            $table->uuid('saved_sender_uuid');
+            $table->uuid('saved_receiver_uuid');
             $table->timestamps();
         });
     }

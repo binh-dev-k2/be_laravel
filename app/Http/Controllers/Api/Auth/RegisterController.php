@@ -114,8 +114,8 @@ class RegisterController extends Controller
         }
 
         if (!$user->hasVerifiedEmail()) {
-            $isOTPExpired = $this->OTPService->isOTPExpired($data['email']);
-            if ($isOTPExpired) {
+            $isLatestOTPExpired = $this->OTPService->isLatestOTPExpired($data['email']);
+            if ($isLatestOTPExpired) {
                 $this->OTPService->sendOTP($data['email']);
                 return xmlResponse(0);
             }
@@ -159,8 +159,8 @@ class RegisterController extends Controller
     {
         $data = $request->validated();
 
-        $isOTPExpired = $this->OTPService->isOTPExpired($data['email']);
-        if ($isOTPExpired) {
+        $isLatestOTPExpired = $this->OTPService->isLatestOTPExpired($data['email']);
+        if ($isLatestOTPExpired) {
             $this->OTPService->sendOTP($data['email']);
             return xmlResponse(0);
         }

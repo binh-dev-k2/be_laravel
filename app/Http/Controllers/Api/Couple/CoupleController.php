@@ -25,13 +25,11 @@ class CoupleController extends Controller
 
     public function getCurrentCouple()
     {
-        $myCouple = $this->coupleService->getInLoveCoupleByUser(Auth::user());
-        if (!$myCouple) {
-            return jsonResponse(2); // dang doc than -.-
+        $currentCouple = $this->coupleService->getCurrentCoupleByUser(Auth::user());
+        if (!$currentCouple) {
+            return jsonResponse(2); // dang doc than
         }
-        $currentTimeline = $this->coupleService->getCurrentTimeline($myCouple);
-        $myCouple->start_date = $currentTimeline->start_date;
-        return jsonResponse(0, $myCouple);
+        return jsonResponse(0, $currentCouple);
     }
 
     public function invite(CoupleRequest $request)

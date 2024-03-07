@@ -25,8 +25,4 @@ class Couple extends Model
     // {
     //     return $query->where('status', self::STATUS_OUT_LOVE);
     // }
-
-    public function timeLine() {
-        return $this->hasMany(CoupleTimeline::class, 'couple_uuid', 'uuid');
-    }
 }

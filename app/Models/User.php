@@ -68,7 +68,7 @@ class User extends Authenticatable
 
     public function couples()
     {
-        return $this->hasMany(Couple::class, 'first_user_uuid', 'uuid')
-            ->orWhere('second_user_uuid', $this->uuid);
+        return $this->hasMany(Couple::class, 'sender_uuid', 'uuid')
+            ->orWhere('receiver_uuid', $this->uuid);
     }
 }

@@ -23,7 +23,7 @@ class CoupleInvitationService
     public function makeInvitation($data)
     {
         $currentUser = Auth::user();
-        $isCurrentUserSingle = $this->coupleService->isSingle($currentUser);
+        $isCurrentUserSingle = $this->coupleService->isUserSingle($currentUser);
         if (!$isCurrentUserSingle) {
             return 2; // user khong doc than
         }
@@ -38,7 +38,7 @@ class CoupleInvitationService
             return 4; // khong ton tai user duoc invite
         }
 
-        $isInvitedUserSingle = $this->coupleService->isSingle($invitedUser);
+        $isInvitedUserSingle = $this->coupleService->isUserSingle($invitedUser);
         if (!$isInvitedUserSingle) {
             return 5; // user duoc gui loi moi da co couple
         }
@@ -47,18 +47,18 @@ class CoupleInvitationService
         return 0;
     }
 
-    public function createInvitation($fromUuid, $toUuid)
+    public function createInvitation($senderUuid, $receiverUuid)
     {
         return CoupleInvitation::create([
-            'from_uuid' => $fromUuid,
-            'to_uuid' => $toUuid,
+            'sender_uuid' => $senderUuid,
+            'receiver_uuid' => $receiverUuid,
             'status' => CoupleInvitation::STATUS_PENDING
         ]);
     }
 
     public function checkPreviousInvitation($userUuid)
     {
-        return CoupleInvitation::where('from_uuid', $userUuid)
+        return CoupleInvitation::where('sender_uuid', $userUuid)
             ->where('status', CoupleInvitation::STATUS_PENDING)
             ->first();
     }
@@ -79,10 +79,11 @@ class CoupleInvitationService
                 case CoupleInvitation::STATUS_REJECTED:
                     return $this->rejectInvitation($invitation); // tu choi
                 case CoupleInvitation::STATUS_DENIED:
-                    return $this->deniedInvitation($invitation);
+                    return $this->deniedInvitation($invitation); // Huy loi moi
                 case CoupleInvitation::STATUS_ACCEPTED:
-                    return $this->acceptedInvitation($invitation);
+                    return $this->acceptedInvitation($invitation); // Chap nhan
             }
+            return 6;
         } catch (Exception $e) {
             Log::error(date("Y-m-d H:i:s") . ": " . $e->getMessage());
             return 6; // Loi khong xac dinh
@@ -91,21 +92,21 @@ class CoupleInvitationService
 
     public function rejectInvitation($invitation)
     {
-        if (Auth::user()->uuid != $invitation->to_uuid) {
+        if (Auth::user()->uuid != $invitation->receiver_uuid) {
             return 3; // khong phai user duoc moi tu choi
         }
         $invitation->status = CoupleInvitation::STATUS_REJECTED;
         $invitation->save();
-        if (Auth::user()->uuid != $invitation->from_uuid) {
-            // notify($invitation->from_uuid);
+        if (Auth::user()->uuid != $invitation->sender_uuid) {
+            // notify($invitation->sender_uuid);
         }
         return 0;
     }
 
     public function deniedInvitation($invitation)
     {
-        if (Auth::user()->uuid != $invitation->from_uuid) {
-            return 4;// khong phai user moi huy yeu cau
+        if (Auth::user()->uuid != $invitation->sender_uuid) {
+            return 4; // khong phai user moi huy yeu cau
         }
         $invitation->status = CoupleInvitation::STATUS_DENIED;
         $invitation->save();
@@ -114,31 +115,32 @@ class CoupleInvitationService
 
     public function acceptedInvitation($invitation)
     {
-        if (Auth::user()->uuid != $invitation->to_uuid) {
+        if (Auth::user()->uuid != $invitation->receiver_uuid) {
             return 5; // khong phai user duoc moi dong y
         }
         $invitation->status = CoupleInvitation::STATUS_ACCEPTED;
         $invitation->save();
 
-        $this->clearCoupleInvitation($invitation);
-        $couple = $this->coupleService->createCouple($invitation->from_uuid, $invitation->to_uuid);
-        $this->coupleService->createCoupleTimeline($couple);
+        $this->rejectPendingInvitation($invitation);
+        $couple = $this->coupleService->createCouple($invitation->sender_uuid, $invitation->receiver_uuid);
         return 0;
     }
 
-    public function clearCoupleInvitation($invitation)
+    public function rejectPendingInvitation($invitation)
     {
-        CoupleInvitation::whereIn('from_uuid', [$invitation->from_uuid, $invitation->to_uuid])
-            ->whereNotIn('id', (array)$invitation->id)
+        CoupleInvitation::whereIn('sender_uuid', [$invitation->sender_uuid, $invitation->receiver_uuid])
+            ->where('id', '!=', $invitation->id)
             ->where('status', CoupleInvitation::STATUS_PENDING)
             ->update(['status' => CoupleInvitation::STATUS_REJECTED]);
 
-        $fromInvites = CoupleInvitation::whereIn('to_uuid', [$invitation->from_uuid, $invitation->to_uuid])
-            ->whereNotIn('id', (array)$invitation->id)
+        $receiverInvitations = CoupleInvitation::whereIn('receiver_uuid', [$invitation->sender_uuid, $invitation->receiver_uuid])
+            ->where('id', '!=', $invitation->id)
             ->where('status', CoupleInvitation::STATUS_PENDING)
             ->get();
 
-        $fromInvites->update(['status' => CoupleInvitation::STATUS_REJECTED]);
-        // notify($fromInvites); lay from_uuid de gui notify
+        foreach ($receiverInvitations as $receiverInvitation) {
+            $receiverInvitation->update(['status' => CoupleInvitation::STATUS_REJECTED]);
+        }
+        // notify($receiverInvitations); //lay sender_uuid de gui notify
     }
 }

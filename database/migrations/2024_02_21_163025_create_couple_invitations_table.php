@@ -15,8 +15,8 @@ class CreateCoupleInvitationsTable extends Migration
     {
         Schema::create('couple_invitations', function (Blueprint $table) {
             $table->id();
-            $table->uuid('from_uuid');
-            $table->uuid('to_uuid');
+            $table->uuid('sender_uuid');
+            $table->uuid('receiver_uuid');
             $table->tinyInteger('status');
             $table->timestamps();
         });
