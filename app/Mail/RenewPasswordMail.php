@@ -11,7 +11,7 @@ class RenewPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $password;
+    public $password;
 
     /**
      * Create a new message instance.
