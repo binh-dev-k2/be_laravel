@@ -70,7 +70,7 @@ class AuthRequest extends FormRequest
                 ];
                 break;
 
-            case 'VerifyOTPForgotPassword':
+            case 'verifyOTPForgotPassword':
                 return [
                     'email' => 'required|string|exists:users',
                     'code' => 'required|numeric|min:100000|max:999999'
