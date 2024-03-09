@@ -28,10 +28,6 @@ class ForgotPasswordController extends Controller
             return jsonResponse(2); //khong ton tai user
         }
 
-        if (!$user->hasVerifiedEmail()) {
-            return jsonResponse(3); // chua verify email
-        }
-
         dispatch(new SendOTP($data['email']));
         return jsonResponse(0);
     }
