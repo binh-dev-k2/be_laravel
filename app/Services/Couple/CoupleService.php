@@ -2,6 +2,7 @@
 
 namespace App\Services\Couple;
 
+use App\Http\Resources\Couple\CoupleResource;
 use Illuminate\Support\Str;
 use App\Models\Couple\Couple;
 use Carbon\Carbon;
@@ -10,10 +11,13 @@ class CoupleService
 {
     public function getCurrentCoupleByUser($user)
     {
-        return Couple::where('sender_uuid', $user->uuid)
+        $couple = Couple::where('sender_uuid', $user->uuid)
             ->orWhere('receiver_uuid', $user->uuid)
             ->where('status', Couple::STATUS_IN_LOVE)
+            ->with(['sender', 'receiver'])
             ->first();
+
+        return new CoupleResource($couple);
     }
 
     public function getOldCoupleByUser($user)

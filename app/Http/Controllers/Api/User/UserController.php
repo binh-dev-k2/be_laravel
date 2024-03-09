@@ -18,9 +18,7 @@ class UserController extends Controller
     {
         $users = User::all();
 
-        return jsonResponse(
-            $code = 0,
-            $data = UserResource::collection($users)
+        return jsonResponse(0, new UserResource($users)
         );
     }
 
