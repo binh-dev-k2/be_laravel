@@ -81,14 +81,15 @@ class CoupleInvitationService
         }
         try {
             switch ($data['status']) {
+                case CoupleInvitation::STATUS_ACCEPTED:
+                    return $this->acceptedInvitation($invitation); // Chap nhan
                 case CoupleInvitation::STATUS_REJECTED:
                     return $this->rejectInvitation($invitation); // tu choi
                 case CoupleInvitation::STATUS_DENIED:
                     return $this->deniedInvitation($invitation); // Huy loi moi
-                case CoupleInvitation::STATUS_ACCEPTED:
-                    return $this->acceptedInvitation($invitation); // Chap nhan
+                default:
+                    return 6;
             }
-            return 6;
         } catch (Exception $e) {
             Log::error(date("Y-m-d H:i:s") . ": " . $e->getMessage());
             return 6; // Loi khong xac dinh
