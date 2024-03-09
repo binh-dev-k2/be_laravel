@@ -47,7 +47,7 @@ class CoupleService
             'sender_uuid' => $firstUserUuid,
             'receiver_uuid' => $secondUserUuid,
             'status' => Couple::STATUS_IN_LOVE,
-            'start_date' => Carbon::now()->format("Y-m-d H:i:s"),
+            'start_time' => Carbon::now()->format("Y-m-d H:i:s"),
             'saved_sender_uuid' => $firstUserUuid,
             'saved_receiver_uuid' => $secondUserUuid
         ]);
