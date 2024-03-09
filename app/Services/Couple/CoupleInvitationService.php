@@ -88,11 +88,11 @@ class CoupleInvitationService
                 case CoupleInvitation::STATUS_DENIED:
                     return $this->deniedInvitation($invitation); // Huy loi moi
                 default:
-                    return 6;
+                    return 7;
             }
         } catch (Exception $e) {
             Log::error(date("Y-m-d H:i:s") . ": " . $e->getMessage());
-            return 6; // Loi khong xac dinh
+            return 7; // Loi khong xac dinh
         }
     }
 
@@ -121,14 +121,18 @@ class CoupleInvitationService
 
     public function acceptedInvitation($invitation)
     {
-        if (Auth::user()->uuid != $invitation->receiver_uuid) {
+        $currentUser = Auth::user();
+        if ($currentUser->uuid != $invitation->receiver_uuid) {
             return 5; // khong phai user duoc moi dong y
+        }
+        if (!$this->coupleService->isUserSingle($currentUser)) {
+            return 6;
         }
         $invitation->status = CoupleInvitation::STATUS_ACCEPTED;
         $invitation->save();
 
         $this->rejectPendingInvitation($invitation);
-        $couple = $this->coupleService->createCouple($invitation->sender_uuid, $invitation->receiver_uuid);
+        $this->coupleService->createCouple($invitation->sender_uuid, $invitation->receiver_uuid);
         return 0;
     }
 
