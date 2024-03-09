@@ -34,8 +34,8 @@ class LoginController extends Controller
 
             //check email verify
             if (!$user->hasVerifiedEmail()) {
-                $checkLatestOTP = $this->OTPService->checkLatestOTP($data['email']);
-                if (!$checkLatestOTP) {
+                $isOTPExpired = $this->OTPService->isOTPExpired($data['email']);
+                if ($isOTPExpired) {
                     $this->OTPService->sendOTP($data['email']);
                 }
                 return xmlResponse(4); // chua verify email

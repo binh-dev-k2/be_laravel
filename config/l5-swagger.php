@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Kapo Api',
             ],
 
             'routes' => [
@@ -40,9 +40,6 @@ return [
                 */
                 'annotations' => [
                     //base_path('app'),
-                    base_path('app') . '\Http\Controllers',
-                    base_path('app') . '\Http\Requests',
-                    base_path('app') . '\Http\Resources',
                     base_path('app') . '\L5Swagger',
                 ],
 
