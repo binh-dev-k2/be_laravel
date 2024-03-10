@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Couple;
+namespace App\Http\Requests\CoupleInvitation;
 
+use App\Models\CoupleInvitation\CoupleInvitation;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CoupleRequest extends FormRequest
+class CoupleInvitationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,13 +30,22 @@ class CoupleRequest extends FormRequest
         $action = $arr[1];
 
         switch ($action) {
-            case 'updateCouple':
+            case 'invite':
                 return [
-                    'status' => 'nullable',
-                    'start_time' => 'nullable',
-                    'nickname' => 'nullable',
-                    'header_title' => 'nullable',
+                    'invited_email' => 'required|email'
                 ];
+                break;
+
+            case 'updateInvite':
+                return [
+                    'invitation_id' => 'required',
+                    'status' => ['required', 'in:' . implode(',', [
+                        CoupleInvitation::STATUS_ACCEPTED,
+                        CoupleInvitation::STATUS_REJECTED,
+                        CoupleInvitation::STATUS_DENIED
+                    ])]
+                ];
+                break;
         }
     }
 

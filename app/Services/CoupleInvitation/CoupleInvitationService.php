@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\Couple;
+namespace App\Services\CoupleInvitation;
 
-use App\Models\Couple\CoupleInvitation;
+use App\Models\CoupleInvitation\CoupleInvitation;
+use App\Services\Couple\CoupleService;
 use App\Services\User\UserService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CoupleInvitationService

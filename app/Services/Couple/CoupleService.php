@@ -6,6 +6,9 @@ use App\Http\Resources\Couple\CoupleResource;
 use Illuminate\Support\Str;
 use App\Models\Couple\Couple;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CoupleService
 {
@@ -42,6 +45,33 @@ class CoupleService
             return false; // user duoc gui loi moi da co couple
         }
         return true;
+    }
+
+    public function updateCurrentCouple($data)
+    {
+        $currentUser = Auth::user();
+        $currentCouple = $this->getCurrentCoupleByUser($currentUser);
+        if (!$currentCouple) {
+            return 2; // dang doc than
+        }
+
+        try {
+            $status = $currentCouple->update([
+                'status' => $data['status'],
+                'start_time' => Carbon::parse($data['start_time'])->format("Y-m-d H:i:s"),
+                'nickname' => $data['nickname'],
+                'header_title' => $data['header_title']
+            ]);
+
+            if ($status) {
+                return 0; // cập nhật thành công
+            } else {
+                return 3; // có lỗi xảy ra
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return 3; //co loi xay ra
+        }
     }
 
     public function createCouple($firstUserUuid, $secondUserUuid)
