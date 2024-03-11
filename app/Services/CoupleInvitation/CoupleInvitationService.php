@@ -20,6 +20,10 @@ class CoupleInvitationService
         $this->userService = $userService;
     }
 
+    public function invitionListToMe() {
+        return CoupleInvitation::where('reveiver_uuid', Auth::user()->uuid)->get();
+    }
+
     public function makeInvitation($data)
     {
         try {

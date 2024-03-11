@@ -15,6 +15,13 @@ class CoupleInvitationController extends Controller
         $this->coupleInvitationService = $coupleInvitationService;
     }
 
+    public function listInvite()
+    {
+        $list = $this->coupleInvitationService->invitionListToMe();
+
+        return jsonResponse(0, $list);
+    }
+
     public function invite(CoupleInvitationRequest $request)
     {
         $data = $request->validated();
