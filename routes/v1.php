@@ -10,5 +10,5 @@ Route::group(['namespace' => 'App\Http\Controllers', 'middleware' => ['auth:api'
 
     //couple
     Route::get('couple', 'Api\Couple\CoupleController@getCurrentCouple');
-    Route::post('couple/update', 'Api\Couple\CoupleController@updateCouple');
+    Route::post('couple', 'Api\Couple\CoupleController@updateCouple');
 });
