@@ -20,7 +20,11 @@ class CoupleService
             ->with(['sender', 'receiver'])
             ->first();
 
-        return new CoupleResource($couple);
+        if ($couple) {
+            return new CoupleResource($couple);
+        }
+
+        return false;
     }
 
     public function getOldCoupleByUser($user)
