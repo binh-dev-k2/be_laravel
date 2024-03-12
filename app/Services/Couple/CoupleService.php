@@ -24,7 +24,7 @@ class CoupleService
             return new CoupleResource($couple);
         }
 
-        return false;
+        return null;
     }
 
     public function getOldCoupleByUser($user)
