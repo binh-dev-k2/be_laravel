@@ -11,4 +11,7 @@ Route::group(['namespace' => 'App\Http\Controllers', 'middleware' => ['auth:api'
     //couple
     Route::get('couple', 'Api\Couple\CoupleController@getCurrentCouple');
     Route::post('couple', 'Api\Couple\CoupleController@updateCouple');
+
+    //user
+    Route::get('user/block', 'Api\User\UserController@blockMySelf');
 });
