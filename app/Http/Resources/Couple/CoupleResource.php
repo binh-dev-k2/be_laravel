@@ -15,7 +15,7 @@ class CoupleResource extends JsonResource
     public function toArray($request)
     {
         // return parent::toArray($request);
-        if (!$this) return null;
+        if (!$this->resource) return null;
 
         $sender = [
             'uuid' => $this->sender->uuid,
