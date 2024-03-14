@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/routes', function () {
+    $routeCollection = Illuminate\Support\Facades\Route::getRoutes();
+
+   dd($routeCollection);
+});
 
 Route::middleware('auth:api')->get('/user', function () {
 });
