@@ -21,7 +21,19 @@ class CoupleInvitationService
     }
 
     public function invitionListToMe() {
-        return CoupleInvitation::where('receiver_uuid', Auth::user()->uuid)->get();
+        $coupleInviteList =  CoupleInvitation::where('receiver_uuid', Auth::user()->uuid)->get();
+        $dataReturn = [];
+        // Lọc những trường cần trả về
+        foreach ($coupleInviteList as $value) {
+            $invite = [
+                "id" => $value->id,
+                "sender_uuid" => $value->sender_uuid,
+                "user_email" => $value->senderUser->email,
+
+            ];
+            array_push($dataReturn, $invite);
+        }
+        return $dataReturn;
     }
 
     public function makeInvitation($data)
