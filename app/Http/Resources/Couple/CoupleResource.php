@@ -16,24 +16,30 @@ class CoupleResource extends JsonResource
     {
         // return parent::toArray($request);
         if (!$this->resource) return null;
+        $sender = null;
+        $receiver = null;
 
-        $sender = [
-            'uuid' => $this->sender->uuid,
-            'name' => $this->sender->name,
-            'nickname' => $this->sender->nickname,
-            'avatar' => $this->sender->avatar,
-            'genter' => $this->sender->genter,
-            'date_of_birth' => $this->sender->date_of_birth,
-        ];
+        if ($this->sender) {
+            $sender = [
+                'uuid' => $this->sender->uuid,
+                'name' => $this->sender->name,
+                'nickname' => $this->sender->nickname,
+                'avatar' => $this->sender->avatar,
+                'genter' => $this->sender->genter,
+                'date_of_birth' => $this->sender->date_of_birth,
+            ];
+        }
 
-        $receiver = [
-            'uuid' => $this->receiver->uuid,
-            'name' => $this->receiver->name,
-            'nickname' => $this->receiver->nickname,
-            'avatar' => $this->receiver->avatar,
-            'genter' => $this->receiver->genter,
-            'date_of_birth' => $this->receiver->date_of_birth,
-        ];
+        if ($this->receiver) {
+            $receiver = [
+                'uuid' => $this->receiver->uuid,
+                'name' => $this->receiver->name,
+                'nickname' => $this->receiver->nickname,
+                'avatar' => $this->receiver->avatar,
+                'genter' => $this->receiver->genter,
+                'date_of_birth' => $this->receiver->date_of_birth,
+            ];
+        }
 
         return [
             'uuid' => $this->uuid,
