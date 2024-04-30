@@ -26,6 +26,14 @@ jobs:
             ${{ runner.os }}-php-
       # - name: Install dependencies composer
       #   run: composer install --prefer-dist --no-progress
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       - name: Run tests
         run: php artisan test tests/Feature/AuthTest.php
       - name: 📂 Sync files
